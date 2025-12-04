@@ -1,0 +1,176 @@
+{
+  "semesters": [
+    {
+      "id": "sem-1",
+      "name": "Semester 1",
+      "order": 0,
+      "courses": [
+        {
+          "code": "CS101",
+          "name": "Introduction to Programming",
+          "credits": 4.0,
+          "gradeType": "letter",
+          "grade": "A",
+          "gradePoint": 8.0
+        },
+        {
+          "code": "MA101",
+          "name": "Calculus I",
+          "credits": 4.0,
+          "gradeType": "marks",
+          "marks": 85,
+          "grade": "E",
+          "gradePoint": 9.0
+        },
+        {
+          "code": "PH101",
+          "name": "Physics I",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "B",
+          "gradePoint": 7.0
+        },
+        {
+          "code": "EN101",
+          "name": "English Communication",
+          "credits": 2.0,
+          "gradeType": "letter",
+          "grade": "A",
+          "gradePoint": 8.0
+        }
+      ],
+      "gpa": 8.0
+    },
+    {
+      "id": "sem-2",
+      "name": "Semester 2",
+      "order": 1,
+      "courses": [
+        {
+          "code": "CS102",
+          "name": "Data Structures",
+          "credits": 4.0,
+          "gradeType": "marks",
+          "marks": 92,
+          "grade": "O",
+          "gradePoint": 10.0
+        },
+        {
+          "code": "MA102",
+          "name": "Calculus II",
+          "credits": 4.0,
+          "gradeType": "letter",
+          "grade": "A",
+          "gradePoint": 8.0
+        },
+        {
+          "code": "CH101",
+          "name": "Chemistry",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "E",
+          "gradePoint": 9.0
+        },
+        {
+          "code": "ME101",
+          "name": "Engineering Graphics",
+          "credits": 2.0,
+          "gradeType": "letter",
+          "grade": "B",
+          "gradePoint": 7.0
+        }
+      ],
+      "gpa": 8.69
+    },
+    {
+      "id": "sem-3",
+      "name": "Semester 3",
+      "order": 2,
+      "courses": [
+        {
+          "code": "CS201",
+          "name": "Algorithms",
+          "credits": 4.0,
+          "gradeType": "marks",
+          "marks": 88,
+          "grade": "E",
+          "gradePoint": 9.0
+        },
+        {
+          "code": "CS202",
+          "name": "Database Systems",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "A",
+          "gradePoint": 8.0
+        },
+        {
+          "code": "MA201",
+          "name": "Discrete Mathematics",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "O",
+          "gradePoint": 10.0
+        },
+        {
+          "code": "EC101",
+          "name": "Digital Electronics",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "A",
+          "gradePoint": 8.0
+        }
+      ],
+      "gpa": 8.69
+    },
+    {
+      "id": "sem-4",
+      "name": "Semester 4",
+      "order": 3,
+      "courses": [
+        {
+          "code": "CS203",
+          "name": "Operating Systems",
+          "credits": 4.0,
+          "gradeType": "marks",
+          "marks": 78,
+          "grade": "A",
+          "gradePoint": 8.0
+        },
+        {
+          "code": "CS204",
+          "name": "Computer Networks",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "E",
+          "gradePoint": 9.0
+        },
+        {
+          "code": "CS205",
+          "name": "Software Engineering",
+          "credits": 3.0,
+          "gradeType": "letter",
+          "grade": "A",
+          "gradePoint": 8.0
+        },
+        {
+          "code": "HU201",
+          "name": "Economics",
+          "credits": 2.0,
+          "gradeType": "letter",
+          "grade": "B",
+          "gradePoint": 7.0
+        }
+      ],
+      "gpa": 8.17
+    }
+  ],
+  "metadata": {
+    "scale": 10,
+    "roundTo": 2,
+    "repeatPolicy": "latest",
+    "customTemplate": null
+  },
+  "customMappings": null,
+  "cgpa": 8.38
+}

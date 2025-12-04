@@ -1,0 +1,49 @@
+{
+  "name": "BIT Mesra 10-Point",
+  "scale": 10,
+  "description": "Official BIT Mesra grading system",
+  "mappings": [
+    {
+      "minMarks": 90,
+      "maxMarks": 100,
+      "letterGrade": "O",
+      "gradePoint": 10.0
+    },
+    {
+      "minMarks": 80,
+      "maxMarks": 89,
+      "letterGrade": "E",
+      "gradePoint": 9.0
+    },
+    {
+      "minMarks": 70,
+      "maxMarks": 79,
+      "letterGrade": "A",
+      "gradePoint": 8.0
+    },
+    {
+      "minMarks": 60,
+      "maxMarks": 69,
+      "letterGrade": "B",
+      "gradePoint": 7.0
+    },
+    {
+      "minMarks": 50,
+      "maxMarks": 59,
+      "letterGrade": "C",
+      "gradePoint": 6.0
+    },
+    {
+      "minMarks": 40,
+      "maxMarks": 49,
+      "letterGrade": "D",
+      "gradePoint": 5.0
+    },
+    {
+      "minMarks": 0,
+      "maxMarks": 39,
+      "letterGrade": "F",
+      "gradePoint": 0.0
+    }
+  ]
+}

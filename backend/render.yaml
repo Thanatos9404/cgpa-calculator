@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: cgpa-calculator-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend-domain.vercel.app,http://localhost:3000
+      - key: API_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
