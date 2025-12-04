@@ -171,6 +171,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { auth, googleProvider, signInWithPopup } = await import('./firebase');
 
       try {
+        // Check if Firebase is properly configured
+        if (!auth) {
+          throw { code: 'auth/not-configured', message: 'Firebase not configured' };
+        }
         const result = await signInWithPopup(auth, googleProvider);
         const firebaseUser = result.user;
 
@@ -226,7 +230,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Try to sign out from Firebase if logged in via Google
       try {
         const { auth, signOut } = await import('./firebase');
-        await signOut(auth);
+        if (auth) {
+          await signOut(auth);
+        }
       } catch {
         // Ignore Firebase errors
       }
