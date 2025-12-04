@@ -1,4 +1,10 @@
-// Add these components at the end of page.tsx (after CourseForm component)
+'use client';
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { BarChart3, Target } from 'lucide-react';
+import { Session } from '@/types/schema';
+import { calculateStatistics, calculateTargetGPA } from '@/lib/statistics';
 
 // Statistics Panel Component
 function StatisticsPanel({ session }: { session: Session }) {
@@ -163,12 +169,12 @@ function TargetCalculatorPanel({ session }: { session: Session }) {
           </div>
 
           <div className={`p-4 rounded-lg ${result.feasible
-              ? 'bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700'
-              : 'bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700'
+            ? 'bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-700'
+            : 'bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700'
             }`}>
             <p className={`text-sm font-medium ${result.feasible
-                ? 'text-green-800 dark:text-green-200'
-                : 'text-red-800 dark:text-red-200'
+              ? 'text-green-800 dark:text-green-200'
+              : 'text-red-800 dark:text-red-200'
               }`}>
               {result.message}
             </p>
@@ -183,3 +189,5 @@ function TargetCalculatorPanel({ session }: { session: Session }) {
     </motion.div>
   );
 }
+
+export { StatisticsPanel, TargetCalculatorPanel };
