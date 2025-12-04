@@ -15,59 +15,55 @@ interface OnboardingStep {
 
 const steps: OnboardingStep[] = [
   {
-    title: 'Welcome to CGPA Calculator! 👋',
-    description: 'Track your academic performance, calculate your CGPA, and analyze your progress across semesters.',
-    icon: <div className="text-4xl">📊</div>,
-    tip: 'Your data is saved automatically in your browser - no account needed!',
+    title: 'Welcome! 👋',
+    description: 'Track your CGPA, analyze progress across semesters.',
+    icon: <div className="text-3xl">📊</div>,
+    tip: 'Data saved in browser - no account needed!',
   },
   {
-    title: 'Add Semesters & Courses',
-    description: 'Click "Add Semester" to create a new semester, then add your courses with grades or marks.',
-    icon: <Plus className="w-12 h-12 text-primary-500" />,
-    tip: 'You can enter grades as letters (A, B, C) or marks (0-100).',
+    title: 'Add Courses',
+    description: 'Click "Add Semester" then add courses with grades.',
+    icon: <Plus className="w-10 h-10 text-primary-500" />,
+    tip: 'Enter letters (A, B) or marks (0-100).',
   },
   {
-    title: 'View Statistics',
-    description: 'See your total courses, credits, highest/lowest semesters, and performance trends.',
-    icon: <BarChart3 className="w-12 h-12 text-primary-500" />,
-    tip: 'Check Analytics page for detailed charts and graphs!',
+    title: 'Statistics',
+    description: 'View total credits, trends, and performance.',
+    icon: <BarChart3 className="w-10 h-10 text-primary-500" />,
+    tip: 'Check Analytics for detailed charts!',
   },
   {
-    title: 'Set Target CGPA',
-    description: 'Calculate what grades you need in future semesters to achieve your target CGPA.',
-    icon: <Target className="w-12 h-12 text-primary-500" />,
-    tip: 'Great for planning your study strategy!',
+    title: 'Target CGPA',
+    description: 'Calculate grades needed for your target.',
+    icon: <Target className="w-10 h-10 text-primary-500" />,
+    tip: 'Great for study planning!',
   },
   {
-    title: 'Export Your Data',
-    description: 'Export your data as JSON or CSV for backup or to use in spreadsheets.',
-    icon: <Download className="w-12 h-12 text-primary-500" />,
-    tip: 'You can also import data from your backup files.',
+    title: 'Export Data',
+    description: 'Export as JSON or CSV for backup.',
+    icon: <Download className="w-10 h-10 text-primary-500" />,
+    tip: 'Import from backup anytime.',
   },
 ];
 
 export default function Onboarding() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(true);
 
   useEffect(() => {
     const seen = localStorage.getItem(ONBOARDING_KEY);
     if (!seen) {
-      setHasSeenOnboarding(false);
       setIsOpen(true);
     }
   }, []);
 
   const handleComplete = () => {
     localStorage.setItem(ONBOARDING_KEY, 'true');
-    setHasSeenOnboarding(true);
     setIsOpen(false);
   };
 
   const handleSkip = () => {
     localStorage.setItem(ONBOARDING_KEY, 'true');
-    setHasSeenOnboarding(true);
     setIsOpen(false);
   };
 
@@ -95,10 +91,10 @@ export default function Onboarding() {
       {/* Help Button - Fixed bottom right */}
       <button
         onClick={handleOpenTutorial}
-        className="fixed bottom-6 right-6 z-40 p-3 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg transition-all hover:scale-110"
+        className="fixed bottom-4 right-4 z-40 p-2.5 sm:p-3 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg transition-all hover:scale-110"
         title="Show Tutorial"
       >
-        <HelpCircle className="w-6 h-6" />
+        <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
       {/* Onboarding Modal */}
@@ -114,23 +110,27 @@ export default function Onboarding() {
               onClick={handleSkip}
             />
 
-            {/* Modal */}
+            {/* Modal - Mobile optimized */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="fixed inset-x-4 top-1/2 -translate-y-1/2 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl max-w-md w-full mx-auto overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl overflow-hidden
+                         inset-4 sm:inset-auto
+                         sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2
+                         sm:max-w-sm sm:w-full
+                         flex flex-col max-h-[calc(100vh-2rem)]"
             >
               {/* Close button */}
               <button
                 onClick={handleSkip}
-                className="absolute top-4 right-4 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors"
+                className="absolute top-2 right-2 p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors z-10"
               >
-                <X className="w-5 h-5 text-neutral-500" />
+                <X className="w-4 h-4 text-neutral-500" />
               </button>
 
-              {/* Content */}
-              <div className="p-6 pt-8">
+              {/* Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto p-4 pt-8 sm:p-6 sm:pt-8">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}
@@ -140,23 +140,23 @@ export default function Onboarding() {
                     className="text-center"
                   >
                     {/* Icon */}
-                    <div className="flex justify-center mb-4">
+                    <div className="flex justify-center mb-3">
                       {steps[currentStep].icon}
                     </div>
 
                     {/* Title */}
-                    <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">
+                    <h2 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
                       {steps[currentStep].title}
                     </h2>
 
                     {/* Description */}
-                    <p className="text-neutral-600 dark:text-neutral-400 mb-4">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
                       {steps[currentStep].description}
                     </p>
 
                     {/* Tip */}
                     {steps[currentStep].tip && (
-                      <div className="bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 text-sm p-3 rounded-lg">
+                      <div className="bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 text-xs p-2 rounded-lg">
                         💡 {steps[currentStep].tip}
                       </div>
                     )}
@@ -165,46 +165,46 @@ export default function Onboarding() {
               </div>
 
               {/* Progress dots */}
-              <div className="flex justify-center gap-2 py-4">
+              <div className="flex justify-center gap-1.5 py-2 border-t border-neutral-100 dark:border-neutral-800">
                 {steps.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentStep(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${idx === currentStep
-                        ? 'bg-primary-600 w-6'
-                        : 'bg-neutral-300 dark:bg-neutral-600'
+                    className={`h-1.5 rounded-full transition-all ${idx === currentStep
+                        ? 'bg-primary-600 w-4'
+                        : 'bg-neutral-300 dark:bg-neutral-600 w-1.5'
                       }`}
                   />
                 ))}
               </div>
 
-              {/* Navigation */}
-              <div className="flex items-center justify-between p-4 border-t border-neutral-200 dark:border-neutral-800">
+              {/* Navigation - Always visible */}
+              <div className="flex items-center justify-between p-3 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900">
                 <button
                   onClick={handlePrev}
                   disabled={currentStep === 0}
-                  className={`flex items-center gap-1 px-4 py-2 rounded-lg transition-colors ${currentStep === 0
+                  className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition-colors ${currentStep === 0
                       ? 'text-neutral-400 cursor-not-allowed'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800'
                     }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  Back
+                  <span className="hidden sm:inline">Back</span>
                 </button>
 
-                <button onClick={handleSkip} className="text-neutral-500 text-sm hover:underline">
+                <button onClick={handleSkip} className="text-neutral-500 text-xs hover:underline px-2">
                   Skip
                 </button>
 
                 <button
                   onClick={handleNext}
-                  className="flex items-center gap-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors"
                 >
                   {currentStep === steps.length - 1 ? (
-                    'Get Started'
+                    "Let's Go!"
                   ) : (
                     <>
-                      Next
+                      <span className="hidden sm:inline">Next</span>
                       <ChevronRight className="w-4 h-4" />
                     </>
                   )}
