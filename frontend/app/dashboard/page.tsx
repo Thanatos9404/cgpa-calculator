@@ -166,48 +166,57 @@ export default function DashboardPage() {
         </p>
       </motion.div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3 justify-center mb-8">
-        <button onClick={addSemester} className="btn-primary flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Add Semester
-        </button>
-        <button
-          onClick={() => setShowStatistics(!showStatistics)}
-          className={`btn-secondary flex items-center gap-2 ${showStatistics ? 'ring-2 ring-primary-500' : ''}`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          Statistics
-        </button>
-        <button
-          onClick={() => setShowTargetCalculator(!showTargetCalculator)}
-          className={`btn-secondary flex items-center gap-2 ${showTargetCalculator ? 'ring-2 ring-primary-500' : ''}`}
-        >
-          <Target className="w-4 h-4" />
-          Target CGPA
-        </button>
-        <label className="btn-secondary flex items-center gap-2 cursor-pointer">
-          <FileInput className="w-4 h-4" />
-          Import
-          <input
-            type="file"
-            accept=".json"
-            onChange={handleImportJSON}
-            className="hidden"
-          />
-        </label>
-        <button onClick={handleExportJSON} className="btn-secondary flex items-center gap-2">
-          <Download className="w-4 h-4" />
-          Export JSON
-        </button>
-        <button onClick={handleExportCSV} className="btn-secondary flex items-center gap-2">
-          <Download className="w-4 h-4" />
-          Export CSV
-        </button>
-        <button onClick={handleClearAll} className="btn-secondary flex items-center gap-2 text-red-600 dark:text-red-400">
-          <Trash2 className="w-4 h-4" />
-          Clear All
-        </button>
+      {/* Quick Actions - Mobile Responsive */}
+      <div className="mb-8">
+        {/* Primary Actions - Always visible */}
+        <div className="flex flex-wrap gap-2 sm:gap-3 justify-center mb-3">
+          <button onClick={addSemester} className="btn-primary flex items-center gap-2 text-sm sm:text-base">
+            <Plus className="w-4 h-4" />
+            <span className="hidden xs:inline">Add</span> Semester
+          </button>
+          <button
+            onClick={() => setShowStatistics(!showStatistics)}
+            className={`btn-secondary flex items-center gap-2 text-sm sm:text-base ${showStatistics ? 'ring-2 ring-primary-500' : ''}`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span className="hidden sm:inline">Statistics</span>
+            <span className="sm:hidden">Stats</span>
+          </button>
+          <button
+            onClick={() => setShowTargetCalculator(!showTargetCalculator)}
+            className={`btn-secondary flex items-center gap-2 text-sm sm:text-base ${showTargetCalculator ? 'ring-2 ring-primary-500' : ''}`}
+          >
+            <Target className="w-4 h-4" />
+            <span className="hidden sm:inline">Target CGPA</span>
+            <span className="sm:hidden">Target</span>
+          </button>
+        </div>
+
+        {/* Secondary Actions - Grid on mobile */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 justify-center">
+          <label className="btn-secondary flex items-center justify-center gap-2 cursor-pointer text-sm">
+            <FileInput className="w-4 h-4" />
+            Import
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportJSON}
+              className="hidden"
+            />
+          </label>
+          <button onClick={handleExportJSON} className="btn-secondary flex items-center justify-center gap-2 text-sm">
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Export</span> JSON
+          </button>
+          <button onClick={handleExportCSV} className="btn-secondary flex items-center justify-center gap-2 text-sm">
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Export</span> CSV
+          </button>
+          <button onClick={handleClearAll} className="btn-secondary flex items-center justify-center gap-2 text-red-600 dark:text-red-400 text-sm">
+            <Trash2 className="w-4 h-4" />
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Statistics Panel */}
@@ -508,29 +517,29 @@ function CourseRow({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ delay: index * 0.03 }}
-      className="flex items-center gap-4 p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg"
+      className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-neutral-100 dark:bg-neutral-800 rounded-lg"
     >
-      <div className="flex-1 grid grid-cols-4 gap-3">
+      <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <div>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Code</p>
-          <p className="font-medium text-neutral-900 dark:text-neutral-100">{course.code || 'N/A'}</p>
+          <p className="font-medium text-neutral-900 dark:text-neutral-100 text-sm sm:text-base">{course.code || 'N/A'}</p>
         </div>
         <div>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Name</p>
-          <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate">{course.name}</p>
+          <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate text-sm sm:text-base">{course.name}</p>
         </div>
         <div>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Credits</p>
-          <p className="font-medium text-neutral-900 dark:text-neutral-100">{course.credits}</p>
+          <p className="font-medium text-neutral-900 dark:text-neutral-100 text-sm sm:text-base">{course.credits}</p>
         </div>
         <div>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Grade / GP</p>
-          <p className="font-medium text-neutral-900 dark:text-neutral-100">
+          <p className="font-medium text-neutral-900 dark:text-neutral-100 text-sm sm:text-base">
             {course.grade} / {course.gradePoint?.toFixed(1) ?? 'N/A'}
           </p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-end">
         <button
           onClick={() => setIsEditing(true)}
           className="p-2 rounded hover:bg-primary-100 dark:hover:bg-primary-900/20 transition-colors text-primary-600 dark:text-primary-400"

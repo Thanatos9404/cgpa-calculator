@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
+import Onboarding from '@/components/Onboarding';
 import { useAuth } from '@/lib/authContext';
 
 export default function DashboardLayout({
@@ -83,6 +84,9 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+
+      {/* Onboarding Tutorial */}
+      <Onboarding />
     </div>
   );
 }

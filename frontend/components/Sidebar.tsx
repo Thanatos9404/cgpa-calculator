@@ -49,14 +49,17 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="p-4 flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800">
         <AnimatePresence mode="wait">
           {!collapsed && (
-            <motion.h1
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-600 bg-clip-text text-transparent"
+              className="flex flex-col"
             >
-              CGPA Calculator
-            </motion.h1>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-600 bg-clip-text text-transparent">
+                CGPA Calculator
+              </h1>
+              <span className="text-xs shimmer-text font-medium">by Y.T</span>
+            </motion.div>
           )}
         </AnimatePresence>
         <button

@@ -103,3 +103,72 @@
 .animate-count-up {
   animation: countUp 0.5s ease-out;
 }
+
+/* Lighter placeholder text */
+.input-field::placeholder {
+  @apply text-neutral-400 dark:text-neutral-500;
+  opacity: 0.6;
+}
+
+input::placeholder,
+textarea::placeholder {
+  @apply text-neutral-400 dark:text-neutral-500;
+  opacity: 0.6;
+}
+
+/* Shimmer effect for branding */
+.shimmer-text {
+  background: linear-gradient(90deg,
+      rgba(120, 120, 120, 0.8) 0%,
+      rgba(180, 180, 180, 1) 50%,
+      rgba(120, 120, 120, 0.8) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.dark .shimmer-text {
+  background: linear-gradient(90deg,
+      rgba(160, 160, 160, 0.8) 0%,
+      rgba(220, 220, 220, 1) 50%,
+      rgba(160, 160, 160, 0.8) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Mobile responsive button styles */
+.btn-mobile {
+  @apply text-sm px-3 py-1.5;
+}
+
+@media (max-width: 640px) {
+  .mobile-stack {
+    @apply flex-col gap-2;
+  }
+
+  .mobile-full {
+    @apply w-full;
+  }
+
+  .mobile-hidden {
+    @apply hidden;
+  }
+
+  .mobile-text-sm {
+    @apply text-sm;
+  }
+}
