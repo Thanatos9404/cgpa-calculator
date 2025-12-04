@@ -22,7 +22,7 @@ export function exportToCSV(session: Session, filename = 'cgpa-data.csv'): void 
     semester.courses.forEach((course) => {
       rows.push([
         semester.name,
-        course.code,
+        course.code || '',
         course.name,
         course.credits.toString(),
         course.grade || '',
@@ -43,7 +43,7 @@ export function exportToXLSX(session: Session, filename = 'cgpa-data.xlsx'): voi
     semester.courses.forEach((course) => {
       data.push({
         Semester: semester.name,
-        'Course Code': course.code,
+        'Course Code': course.code || '',
         'Course Name': course.name,
         Credits: course.credits,
         Grade: course.grade || '',
