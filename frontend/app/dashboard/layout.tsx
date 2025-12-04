@@ -14,9 +14,24 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Default collapsed for mobile
   const [isDark, setIsDark] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+
+  // Auto-detect mobile and set sidebar state
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobile = window.innerWidth < 768;
+      setSidebarCollapsed(isMobile);
+    };
+
+    // Check on mount
+    checkMobile();
+
+    // Listen for resize
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Check authentication
   useEffect(() => {
