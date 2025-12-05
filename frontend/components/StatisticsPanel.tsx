@@ -8,6 +8,11 @@ import { BarChart3 } from 'lucide-react';
 export default function StatisticsPanel({ session }: { session: Session }) {
   const stats = calculateStatistics(session);
 
+  // Count semesters with data (either courses or manual)
+  const semestersWithData = session.semesters.filter(s =>
+    s.courses.length > 0 || (s.manualGPA !== null && s.manualGPA !== undefined)
+  ).length;
+
   const trendColor = stats.trendDirection === 'improving'
     ? 'text-green-600 dark:text-green-400'
     : stats.trendDirection === 'declining'
@@ -30,8 +35,12 @@ export default function StatisticsPanel({ session }: { session: Session }) {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg">
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Courses</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.totalCourses}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            {stats.totalCourses > 0 ? 'Total Courses' : 'Semesters'}
+          </p>
+          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+            {stats.totalCourses > 0 ? stats.totalCourses : semestersWithData}
+          </p>
         </div>
         <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Credits</p>
@@ -59,18 +68,25 @@ export default function StatisticsPanel({ session }: { session: Session }) {
         </p>
       </div>
 
-      <div>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">Grade Distribution</p>
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(stats.gradeDistribution).map(([grade, count]) => (
-            <div key={grade} className="bg-primary-100 dark:bg-primary-900/30 px-3 py-1 rounded-full">
-              <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-                {grade}: {count}
-              </span>
-            </div>
-          ))}
+      {Object.keys(stats.gradeDistribution).length > 0 ? (
+        <div>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">Grade Distribution</p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(stats.gradeDistribution).map(([grade, count]) => (
+              <div key={grade} className="bg-primary-100 dark:bg-primary-900/30 px-3 py-1 rounded-full">
+                <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                  {grade}: {count}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : semestersWithData > 0 ? (
+        <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-sm text-amber-700 dark:text-amber-300">
+          ⚡ Using manual GPA entries - add courses for detailed grade breakdown
+        </div>
+      ) : null}
     </motion.div>
   );
 }
+
