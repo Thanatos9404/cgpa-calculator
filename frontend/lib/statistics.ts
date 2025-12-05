@@ -2,7 +2,7 @@
  * Statistics and analysis utilities for CGPA data
  */
 import { Session, Semester, Course } from '@/types/schema';
-import { calculateGPA, calculateCGPA, roundForDisplay } from './calculator';
+import { calculateGPA, calculateCGPA, roundForDisplay, getSemesterGPA, getSemesterCredits } from './calculator';
 
 export interface Statistics {
   totalCourses: number;
@@ -21,26 +21,36 @@ export function calculateStatistics(session: Session): Statistics {
   let totalCredits = 0;
   const gradeDistribution: Record<string, number> = {};
   const semesterGPAs: number[] = [];
+  let semestersWithData = 0;
 
   semesters.forEach(semester => {
+    // Get effective GPA (course-based or manual)
+    const { gpa, isManual } = getSemesterGPA(semester);
+    const credits = getSemesterCredits(semester);
+
+    // Count courses for detailed entries
     totalCourses += semester.courses.length;
 
+    // Get credits (from courses or manual)
+    totalCredits += credits;
+
+    // Grade distribution (only from actual courses)
     semester.courses.forEach(course => {
-      totalCredits += course.credits;
       if (course.grade) {
         gradeDistribution[course.grade] = (gradeDistribution[course.grade] || 0) + 1;
       }
     });
 
-    const gpa = calculateGPA(semester.courses);
+    // Track GPA for this semester (whether manual or calculated)
     if (gpa !== null) {
       semesterGPAs.push(gpa);
+      semestersWithData++;
     }
   });
 
   const highestSemesterGPA = semesterGPAs.length > 0 ? Math.max(...semesterGPAs) : null;
   const lowestSemesterGPA = semesterGPAs.length > 0 ? Math.min(...semesterGPAs) : null;
-  const averageCreditsPerSemester = semesters.length > 0 ? totalCredits / semesters.length : 0;
+  const averageCreditsPerSemester = semestersWithData > 0 ? totalCredits / semestersWithData : 0;
 
   // Calculate trend
   let trendDirection: 'improving' | 'declining' | 'stable' | 'unknown' = 'unknown';
@@ -89,13 +99,10 @@ export function calculateTargetGPA(
 ): TargetCalculation {
   const currentCGPA = calculateCGPA(session.semesters) || 0;
 
+  // Use getSemesterCredits to include manual credits
   let creditsCompleted = 0;
   session.semesters.forEach(semester => {
-    semester.courses.forEach(course => {
-      if (course.gradePoint !== null && course.gradePoint !== undefined && course.credits > 0) {
-        creditsCompleted += course.credits;
-      }
-    });
+    creditsCompleted += getSemesterCredits(semester);
   });
 
   // Formula: targetCGPA = (currentCGPA * creditsCompleted + requiredGPA * creditsRemaining) / (creditsCompleted + creditsRemaining)

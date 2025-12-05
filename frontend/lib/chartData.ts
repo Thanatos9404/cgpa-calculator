@@ -1,5 +1,5 @@
-import { Session } from '@/types/schema';
-import { calculateGPA, roundForDisplay } from './calculator';
+import { Session, Semester } from '@/types/schema';
+import { calculateGPA, roundForDisplay, getSemesterGPA, getSemesterCredits, calculateCGPA } from './calculator';
 
 export interface ChartDataPoint {
   name: string;
@@ -14,16 +14,17 @@ export function getCGPATimeline(session: Session): ChartDataPoint[] {
   let cumulativeCredits = 0;
 
   return sortedSemesters.map((semester) => {
+    // Get effective GPA and credits (course-based or manual)
+    const { gpa: semesterGPA } = getSemesterGPA(semester);
+    const semesterCredits = getSemesterCredits(semester);
+
     // Add this semester's contribution
-    semester.courses.forEach(course => {
-      if (course.gradePoint !== null && course.gradePoint !== undefined) {
-        cumulativePoints += course.gradePoint * course.credits;
-        cumulativeCredits += course.credits;
-      }
-    });
+    if (semesterGPA !== null && semesterCredits > 0) {
+      cumulativePoints += semesterGPA * semesterCredits;
+      cumulativeCredits += semesterCredits;
+    }
 
     const cgpa = cumulativeCredits > 0 ? cumulativePoints / cumulativeCredits : 0;
-    const semesterGPA = calculateGPA(semester.courses) || 0;
 
     return {
       name: semester.name,
@@ -45,6 +46,15 @@ export function getGradeDistribution(session: Session): ChartDataPoint[] {
     });
   });
 
+  // If no course-level grades, show a message for manual entries
+  if (Object.keys(distribution).length === 0) {
+    // Check if there are manual entries
+    const hasManualEntries = session.semesters.some(s => s.manualGPA !== null && s.manualGPA !== undefined);
+    if (hasManualEntries) {
+      return [{ name: 'Manual Entry', value: 1, count: session.semesters.filter(s => s.manualGPA).length }];
+    }
+  }
+
   return Object.entries(distribution)
     .map(([grade, count]) => ({
       name: grade,
@@ -58,11 +68,7 @@ export function getCreditsBreakdown(session: Session): ChartDataPoint[] {
   let completedCredits = 0;
 
   session.semesters.forEach(semester => {
-    semester.courses.forEach(course => {
-      if (course.gradePoint !== null && course.gradePoint !== undefined) {
-        completedCredits += course.credits;
-      }
-    });
+    completedCredits += getSemesterCredits(semester);
   });
 
   // Assume typical degree is 160 credits (can be configurable)
@@ -79,7 +85,7 @@ export function getSemesterComparison(session: Session): ChartDataPoint[] {
   const sortedSemesters = [...session.semesters].sort((a, b) => a.order - b.order);
 
   return sortedSemesters.map(semester => {
-    const gpa = calculateGPA(semester.courses);
+    const { gpa } = getSemesterGPA(semester);
 
     return {
       name: semester.name,
@@ -125,16 +131,31 @@ export function getProgressMetrics(session: Session, totalCreditsRequired: numbe
   let completedCredits = 0;
   let coursesCompleted = 0;
   let totalCourses = 0;
+  let semestersWithManualEntry = 0;
 
   session.semesters.forEach(semester => {
+    // Count courses
     semester.courses.forEach(course => {
       totalCourses++;
       if (course.gradePoint !== null && course.gradePoint !== undefined) {
-        completedCredits += course.credits;
         coursesCompleted++;
       }
     });
+
+    // Get credits (from courses or manual)
+    completedCredits += getSemesterCredits(semester);
+
+    // Track manual entries
+    if (semester.courses.length === 0 && semester.manualGPA !== null && semester.manualGPA !== undefined) {
+      semestersWithManualEntry++;
+    }
   });
+
+  // For display purposes, count manual entry semesters as "completed"
+  if (semestersWithManualEntry > 0 && totalCourses === 0) {
+    totalCourses = semestersWithManualEntry;
+    coursesCompleted = semestersWithManualEntry;
+  }
 
   const percentage = (completedCredits / totalCreditsRequired) * 100;
 
