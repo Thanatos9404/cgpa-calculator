@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Session, Semester, Course, GradeType } from '@/types/schema';
-import { calculateCGPA, calculateGPA, roundForDisplay, convertMarksToPoints, BIT_MESRA_10_POINT, convertGradeToPoints } from '@/lib/calculator';
+import { calculateCGPA, calculateGPA, roundForDisplay, convertMarksToPoints, BIT_MESRA_10_POINT, convertGradeToPoints, getSemesterGPA } from '@/lib/calculator';
 import { loadSession, saveSession, clearSession } from '@/lib/storage';
 import { exportToJSON, exportToCSV } from '@/lib/export';
 import { calculateStatistics, calculateTargetGPA } from '@/lib/statistics';
 import { calculateIntraSemesterTarget } from '@/lib/intrasemester';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Download, Trash2, Edit2, Save, X, BookOpen, Target, BarChart3, FileInput, Award } from 'lucide-react';
+import { Plus, Download, Trash2, Edit2, Save, X, BookOpen, Target, BarChart3, FileInput, Award, Zap } from 'lucide-react';
 
 // Import the panel components
 import StatisticsPanel from '@/components/StatisticsPanel';
@@ -295,12 +295,41 @@ function SemesterCard({
   const [showIntraTarget, setShowIntraTarget] = useState(false);
   const [intraTargetGPA, setIntraTargetGPA] = useState('');
 
-  const gpa = calculateGPA(semester.courses);
+  // Quick entry state
+  const [showQuickEntry, setShowQuickEntry] = useState(false);
+  const [quickGPA, setQuickGPA] = useState(semester.manualGPA?.toString() || '');
+  const [quickCredits, setQuickCredits] = useState(semester.manualCredits?.toString() || '');
+
+  // Get effective GPA (course-based takes priority)
+  const { gpa, isManual } = getSemesterGPA(semester);
   const gpaDisplay = roundForDisplay(gpa);
 
   const handleSaveName = () => {
     onUpdate({ name: editName });
     setIsEditing(false);
+  };
+
+  const handleSaveQuickEntry = () => {
+    const gpaVal = parseFloat(quickGPA);
+    const creditsVal = parseFloat(quickCredits);
+
+    if (isNaN(gpaVal) || gpaVal < 0 || gpaVal > scale) {
+      alert(`Please enter a valid GPA (0-${scale})`);
+      return;
+    }
+    if (isNaN(creditsVal) || creditsVal <= 0) {
+      alert('Please enter valid credits (> 0)');
+      return;
+    }
+
+    onUpdate({ manualGPA: gpaVal, manualCredits: creditsVal });
+    setShowQuickEntry(false);
+  };
+
+  const handleClearManualEntry = () => {
+    onUpdate({ manualGPA: null, manualCredits: null });
+    setQuickGPA('');
+    setQuickCredits('');
   };
 
   const handleCalculateIntraTarget = () => {
@@ -320,7 +349,7 @@ function SemesterCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ delay: index * 0.05 }}
-      className="glass-card p-6 rounded-xl"
+      className="glass-card p-4 sm:p-6 rounded-xl"
     >
       {/* Semester Header */}
       <div className="flex items-center justify-between mb-4">
@@ -342,8 +371,8 @@ function SemesterCard({
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3 flex-1">
-            <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1">
+            <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">
               {semester.name}
             </h3>
             <button
@@ -354,10 +383,20 @@ function SemesterCard({
             </button>
           </div>
         )}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="text-right">
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">Semester GPA</p>
-            <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+            <div className="flex items-center gap-1 justify-end">
+              <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">Semester GPA</p>
+              {gpaDisplay !== null && (
+                <span className={`text-xs px-1.5 py-0.5 rounded ${isManual
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                    : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                  }`}>
+                  {isManual ? 'Manual' : 'Calc'}
+                </span>
+              )}
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
               {gpaDisplay !== null ? gpaDisplay.toFixed(2) : 'N/A'}
             </p>
           </div>
@@ -369,6 +408,97 @@ function SemesterCard({
           </button>
         </div>
       </div>
+
+      {/* Quick Entry Toggle & Form */}
+      {semester.courses.length === 0 && (
+        <div className="mb-4">
+          {!showQuickEntry ? (
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setShowQuickEntry(true)}
+                className="btn-secondary flex items-center gap-2 text-sm"
+              >
+                <Zap className="w-4 h-4" />
+                Quick Entry
+              </button>
+              {semester.manualGPA && (
+                <button
+                  onClick={handleClearManualEntry}
+                  className="btn-secondary flex items-center gap-2 text-sm text-red-600 dark:text-red-400"
+                >
+                  <X className="w-4 h-4" />
+                  Clear Manual
+                </button>
+              )}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+                  Quick Entry Mode
+                </h4>
+              </div>
+              <p className="text-xs text-amber-700 dark:text-amber-300 mb-3">
+                Enter semester GPA directly. Add courses later for detailed tracking.
+              </p>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="text-xs text-amber-700 dark:text-amber-300">SGPA *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max={scale}
+                    value={quickGPA}
+                    onChange={(e) => setQuickGPA(e.target.value)}
+                    className="input-field"
+                    placeholder={`0-${scale}`}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-amber-700 dark:text-amber-300">Total Credits *</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    value={quickCredits}
+                    onChange={(e) => setQuickCredits(e.target.value)}
+                    className="input-field"
+                    placeholder="e.g., 24"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={handleSaveQuickEntry} className="btn-primary text-sm flex-1">
+                  Save
+                </button>
+                <button onClick={() => setShowQuickEntry(false)} className="btn-secondary text-sm">
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      {/* Info when manual entry exists but courses added */}
+      {semester.courses.length > 0 && semester.manualGPA && (
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-xs text-blue-700 dark:text-blue-300">
+          ℹ️ Courses added - using calculated GPA ({roundForDisplay(calculateGPA(semester.courses))?.toFixed(2)}).
+          Manual entry ({semester.manualGPA.toFixed(2)}) is now ignored.
+          <button
+            onClick={handleClearManualEntry}
+            className="ml-2 underline hover:no-underline"
+          >
+            Clear manual
+          </button>
+        </div>
+      )}
 
       {/* Intrasemester Target Button */}
       {semester.courses.length > 0 && (

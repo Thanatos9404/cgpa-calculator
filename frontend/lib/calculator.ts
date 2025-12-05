@@ -147,8 +147,53 @@ export function calculateGPA(courses: Course[]): number | null {
 }
 
 export function calculateCGPA(semesters: Semester[]): number | null {
-  const allCourses = semesters.flatMap((sem) => sem.courses);
-  return calculateGPA(allCourses);
+  let totalPoints = 0;
+  let totalCredits = 0;
+
+  for (const semester of semesters) {
+    // Priority: Course-based GPA > Manual GPA
+    if (semester.courses.length > 0) {
+      // Use calculated GPA from courses
+      for (const course of semester.courses) {
+        if (course.gradePoint === null || course.gradePoint === undefined) continue;
+        if (course.credits === 0) continue;
+        totalPoints += course.gradePoint * course.credits;
+        totalCredits += course.credits;
+      }
+    } else if (semester.manualGPA !== null && semester.manualGPA !== undefined &&
+      semester.manualCredits !== null && semester.manualCredits !== undefined &&
+      semester.manualCredits > 0) {
+      // Use manual GPA entry
+      totalPoints += semester.manualGPA * semester.manualCredits;
+      totalCredits += semester.manualCredits;
+    }
+  }
+
+  if (totalCredits === 0) {
+    return null;
+  }
+
+  return totalPoints / totalCredits;
+}
+
+// Get effective GPA for a semester (course-based or manual)
+export function getSemesterGPA(semester: Semester): { gpa: number | null; isManual: boolean } {
+  if (semester.courses.length > 0) {
+    return { gpa: calculateGPA(semester.courses), isManual: false };
+  } else if (semester.manualGPA !== null && semester.manualGPA !== undefined) {
+    return { gpa: semester.manualGPA, isManual: true };
+  }
+  return { gpa: null, isManual: false };
+}
+
+// Get effective credits for a semester
+export function getSemesterCredits(semester: Semester): number {
+  if (semester.courses.length > 0) {
+    return semester.courses.reduce((sum, c) => sum + (c.credits || 0), 0);
+  } else if (semester.manualCredits !== null && semester.manualCredits !== undefined) {
+    return semester.manualCredits;
+  }
+  return 0;
 }
 
 export function convertScale(

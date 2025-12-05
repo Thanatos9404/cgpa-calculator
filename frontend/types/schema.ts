@@ -34,6 +34,9 @@ export const SemesterSchema = z.object({
   courses: z.array(CourseSchema).default([]),
   gpa: z.number().min(0).optional().nullable(),
   order: z.number().default(0),
+  // Manual entry fields - used when user enters GPA directly without courses
+  manualGPA: z.number().min(0).max(10).optional().nullable(),
+  manualCredits: z.number().min(0).optional().nullable(),
 });
 
 export type Semester = z.infer<typeof SemesterSchema>;
